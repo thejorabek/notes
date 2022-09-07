@@ -5,6 +5,7 @@ import 'package:list/provider/done_provider.dart';
 import 'package:list/provider/notes_provider.dart';
 import 'package:list/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:roundcheckbox/roundcheckbox.dart';
 
 class NotesTabBar extends StatefulWidget {
   const NotesTabBar({Key? key}) : super(key: key);
@@ -35,21 +36,16 @@ class _NotesTabBarState extends State<NotesTabBar> {
                   return Card(child: Consumer(
                     builder: ((context, value, child) {
                       return ListTile(
-                          // leading: RoundCheckBox(onTap: (v) {
-                          //   // checkbox.makeChacked(index);
-                          //   // done.addToDone(notes.notes[index]);
-                          //   // notes.removeNote(index);
-                          //   v = checkbox.isChecked;
-                          // }),
-                          leading: Checkbox(
-                            onChanged: (v) {
-                              checkbox.makeChacked(notes.notes[index]);
-                              done.addToDone(notes.notes[index]);
-                              notes.removeNote(notes.notes[index]);
-                              v = checkbox.isChecked;
-                            },
-                            value: checkbox.isChecked,
-                          ),
+                          leading: RoundCheckBox(
+                              isChecked: checkbox.isChecked,
+                              onTap: (v) {
+                                v = checkbox.isChecked;
+                                checkbox.makeChacked();
+                                if (checkbox.isChecked) {
+                                  done.addToDone(notes.notes[index]);
+                                  Future.delayed(const Duration(seconds: 1)).then((value) => notes.removeNote(index));
+                                } else {}
+                              }),
                           title: Text(notes.notes[index]['title']),
                           subtitle: Text(notes.notes[index]['subtitle']),
                           trailing: IconButton(
