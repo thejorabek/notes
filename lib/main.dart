@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:list/provider/checkbox_provider.dart';
+import 'package:list/provider/delete_provider.dart';
+import 'package:list/provider/done_provider.dart';
+import 'package:list/provider/notes_provider.dart';
 import 'package:list/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'home/home_page.dart';
@@ -17,6 +20,9 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: ((context) => ThemeProvider())),
           ChangeNotifierProvider(create: (context) => CheckboxProvider()),
+          ChangeNotifierProvider(create: (context)=>DoneProvider()),
+          ChangeNotifierProvider(create: (context)=>DeleteProvider()),
+          ChangeNotifierProvider(create: (context)=>NotesProvider())
         ],
         child: Consumer(
           builder: ((context, value, child) {

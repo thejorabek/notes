@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:list/provider/checkbox_provider.dart';
+import 'package:list/provider/delete_provider.dart';
+import 'package:list/provider/done_provider.dart';
+import 'package:list/provider/notes_provider.dart';
 import 'package:list/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:roundcheckbox/roundcheckbox.dart';
-import '../../home/deleted_notes_page.dart';
-import '../../home/home_page.dart';
 
 class NotesTabBar extends StatefulWidget {
   const NotesTabBar({Key? key}) : super(key: key);
@@ -19,27 +19,44 @@ class _NotesTabBarState extends State<NotesTabBar> {
 
   @override
   Widget build(BuildContext context) {
+    final notes = context.watch<NotesProvider>();
+    final checkbox = context.watch<CheckboxProvider>();
+    final done = context.watch<DoneProvider>();
+    final theme = context.watch<ThemeProvider>();
+    final delete = context.watch<DeleteProvider>();
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
-        body: data.isNotEmpty
+        body: notes.notes.isNotEmpty
             ? ListView.builder(
-                physics: BouncingScrollPhysics(),
-                itemCount: data.length,
+                physics: const BouncingScrollPhysics(),
+                itemCount: notes.notes.length,
                 itemBuilder: ((context, index) {
                   return Card(child: Consumer(
                     builder: ((context, value, child) {
                       return ListTile(
-                          leading: RoundCheckBox(onTap: (v) {
-                            context.read<CheckboxProvider>().makeChacked();
-                            v = context.watch<CheckboxProvider>().isChecked;
-                          }),
-                          title: Text(data[index]['title']),
-                          subtitle: Text(data[index]['subtitle']),
+                          // leading: RoundCheckBox(onTap: (v) {
+                          //   // checkbox.makeChacked(index);
+                          //   // done.addToDone(notes.notes[index]);
+                          //   // notes.removeNote(index);
+                          //   v = checkbox.isChecked;
+                          // }),
+                          leading: Checkbox(
+                            onChanged: (v) {
+                              checkbox.makeChacked(notes.notes[index]);
+                              done.addToDone(notes.notes[index]);
+                              notes.removeNote(notes.notes[index]);
+                              v = checkbox.isChecked;
+                            },
+                            value: checkbox.isChecked,
+                          ),
+                          title: Text(notes.notes[index]['title']),
+                          subtitle: Text(notes.notes[index]['subtitle']),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              setState(() {
-                                delete.add(data.removeAt(index));
-                              });
+                              delete.assNote(notes.notes[index]);
+                              notes.removeNote(index);
                             },
                           ));
                     }),
@@ -57,22 +74,26 @@ class _NotesTabBarState extends State<NotesTabBar> {
         floatingActionButton: Consumer(
           builder: ((context, value, child) {
             return FloatingActionButton(
-              backgroundColor: context.watch<ThemeProvider>().isDark ? null : Colors.amber,
+              backgroundColor: theme.isDark ? null : Colors.amber,
               onPressed: () {
                 showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
                           actions: [
                             ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(context.watch<ThemeProvider>().isDark ? null : Colors.amber)),
                                 child: const Text('Cancel'),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 }),
                             ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(context.watch<ThemeProvider>().isDark ? null : Colors.amber)),
                                 child: const Text('Add'),
                                 onPressed: () {
                                   if (controller1.text.isNotEmpty && controller2.text.isNotEmpty) {
-                                    data.add({'title': controller1.text, 'subtitle': controller2.text});
+                                    notes.notes.add({'title': controller1.text, 'subtitle': controller2.text});
                                     controller1.clear();
                                     controller2.clear();
                                   } else {
@@ -91,18 +112,17 @@ class _NotesTabBarState extends State<NotesTabBar> {
                           ],
                           title: const Text('Add Notes'),
                           content: SizedBox(
-                            height: 100,
-                            width: 150,
+                            height: height * .17,
+                            width: width * .2,
                             child: Column(children: [
                               TextFormField(
                                 controller: controller1,
-                                decoration: const InputDecoration(hintText: 'Title'),
+                                decoration: const InputDecoration(hintText: 'Title', border: OutlineInputBorder()),
                               ),
+                              SizedBox(height: height * .01),
                               TextFormField(
                                 controller: controller2,
-                                decoration: const InputDecoration(
-                                  hintText: 'Subtitle',
-                                ),
+                                decoration: const InputDecoration(hintText: 'Subtitle', border: OutlineInputBorder()),
                               ),
                             ]),
                           ),
@@ -110,7 +130,7 @@ class _NotesTabBarState extends State<NotesTabBar> {
               },
               child: Icon(
                 Icons.add,
-                color: context.watch<ThemeProvider>().isDark ? null : Colors.black,
+                color: theme.isDark ? null : Colors.black,
               ),
             );
           }),

@@ -3,7 +3,7 @@ import 'package:list/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import '../components/tabs/archived_tab.dart';
 import '../components/tabs/notes_tab.dart';
-import '../components/tabs/starred_tab.dart';
+import '../components/tabs/done_tab.dart';
 import 'deleted_notes_page.dart';
 import '../components/my_drawer.dart';
 
@@ -26,16 +26,8 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
               appBar: AppBar(
                 backgroundColor: context.watch<ThemeProvider>().isDark ? null : Colors.amber,
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Delete()));
-                      },
-                      icon: const Icon(Icons.search)),
-                  const SizedBox(width: 15)
-                ],
                 centerTitle: true,
-                bottom: TabBar(indicatorSize: TabBarIndicatorSize.label, indicatorColor: Colors.white, tabs: [
+                bottom: TabBar(labelStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),indicatorSize: TabBarIndicatorSize.label, indicatorColor: Colors.white, tabs: [
                   Tab(
                     text: tabs[0]['second'],
                   ),
@@ -48,7 +40,7 @@ class _HomePageState extends State<HomePage> {
                 ]),
               ),
               drawer: const MyDrawer(),
-              body:const TabBarView(
+              body: const TabBarView(
                 children: [
                   DoneTabBar(),
                   NotesTabBar(),
@@ -61,7 +53,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-List<Map<String, dynamic>> data = [];
 List<Map<String, dynamic>> tabs = [
   {
     'first': 'Notes',
