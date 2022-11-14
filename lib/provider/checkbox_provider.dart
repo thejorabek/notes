@@ -7,7 +7,7 @@ class CheckboxProvider extends ChangeNotifier {
   bool get isChecked => _isChecked;
   NotesProvider notes = NotesProvider();
 
-  void makeChacked() {
+  void makeChacked(var which) {
     _isChecked = !_isChecked;
     notifyListeners();
   }

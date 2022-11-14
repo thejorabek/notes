@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:list/provider/checkbox_provider.dart';
 import 'package:list/provider/delete_provider.dart';
 import 'package:list/provider/done_provider.dart';
@@ -40,20 +41,28 @@ class _NotesTabBarState extends State<NotesTabBar> {
                               isChecked: checkbox.isChecked,
                               onTap: (v) {
                                 v = checkbox.isChecked;
-                                checkbox.makeChacked();
+                                checkbox.makeChacked(index);
                                 if (checkbox.isChecked) {
                                   done.addToDone(notes.notes[index]);
-                                  Future.delayed(const Duration(seconds: 1)).then((value) => notes.removeNote(index));
+                                  Future.delayed(const Duration(seconds: 2)).then((value) => notes.removeNote(index));
                                 } else {}
                               }),
                           title: Text(notes.notes[index]['title']),
                           subtitle: Text(notes.notes[index]['subtitle']),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              delete.assNote(notes.notes[index]);
-                              notes.removeNote(index);
-                            },
+                          trailing: Column(
+                            children: [
+                              GestureDetector(
+                                child: Icon(Icons.delete),
+                                onTap: () {
+                                  delete.assNote(notes.notes[index]);
+                                  notes.removeNote(index);
+                                },
+                              ),
+                              Text(
+                                DateFormat('yyyy/MM/dd hh:MM a').format(DateTime.now()),
+                                style: TextStyle(fontSize: 14),
+                              )
+                            ],
                           ));
                     }),
                   ));

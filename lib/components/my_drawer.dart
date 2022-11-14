@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:list/home/settings_page.dart';
-import 'package:list/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import '../home/deleted_notes_page.dart';
 
@@ -19,7 +18,6 @@ class _MyDrawerState extends State<MyDrawer> {
   Widget build(BuildContext context) {
     return Consumer(builder: ((context, value, child) {
       return Drawer(
-        
           width: 250,
           child: Column(
             children: [
